@@ -112,9 +112,9 @@ export const HeroSection = () => {
         <div className="grid lg:grid-cols-3 gap-6 items-start">
           {/* Left Section: Title, Offer, and Timer */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Title and Offer */}
-            <div className="animate-fade-in space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground relative inline-block">
+            {/* Title */}
+            <div className="animate-fade-in">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground relative inline-block mb-6">
                 <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
                   Более 50 моделей
                 </span>
@@ -124,14 +124,16 @@ export const HeroSection = () => {
                   <Sparkles className="absolute -top-2 -right-8 w-6 h-6 text-accent animate-pulse" />
                 </span>
               </h1>
-              <button 
-                onClick={() => setIsProductModalOpen(true)}
-                className="inline-block bg-accent text-accent-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg hover:scale-105 transition-all cursor-pointer animate-glow-pulse"
-              >
-                <p className="text-lg md:text-xl lg:text-2xl font-bold">Прицеп Титан 2013-05</p>
-                <p className="text-base md:text-lg">со СКИДКОЙ 10%</p>
-              </button>
             </div>
+            
+            {/* Discount Offer Banner */}
+            <button 
+              onClick={() => setIsProductModalOpen(true)}
+              className="inline-block bg-accent text-accent-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg hover:scale-105 transition-all cursor-pointer animate-glow-pulse mb-6"
+            >
+              <p className="text-lg md:text-xl lg:text-2xl font-bold">Прицеп Титан 2013-05</p>
+              <p className="text-base md:text-lg">со СКИДКОЙ 10%</p>
+            </button>
 
             {/* Timer */}
             <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl animate-scale-in max-w-2xl border-2 border-accent/20">
