@@ -48,7 +48,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-4">Меню</h3>
+            <h3 className="font-bold text-lg mb-4 text-background">Меню</h3>
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.href}>
@@ -64,7 +64,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-4">Контакты</h3>
+            <h3 className="font-bold text-lg mb-4 text-background">Контакты</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-1 flex-shrink-0" />
@@ -88,8 +88,8 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-4">Быстрая связь</h3>
-            <Button 
+            <h3 className="font-bold text-lg mb-4 text-background">Быстрая связь</h3>
+            <Button
               className="w-full bg-accent hover:bg-accent-hover mb-4"
               size="lg"
             >

@@ -125,15 +125,6 @@ export const HeroSection = () => {
                 </span>
               </h1>
             </div>
-            
-            {/* Discount Offer Banner */}
-            <button 
-              onClick={() => setIsProductModalOpen(true)}
-              className="inline-block bg-accent text-accent-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg hover:scale-105 transition-all cursor-pointer animate-glow-pulse mb-6"
-            >
-              <p className="text-lg md:text-xl lg:text-2xl font-bold">Прицеп Титан 2013-05</p>
-              <p className="text-base md:text-lg">со СКИДКОЙ 10%</p>
-            </button>
 
             {/* Timer */}
             <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-2xl animate-scale-in max-w-2xl border-2 border-accent/20">
@@ -170,7 +161,16 @@ export const HeroSection = () => {
           </div>
 
           {/* Right Section: Contact Form */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
+            {/* Discount Offer Banner */}
+            <button 
+              onClick={() => setIsProductModalOpen(true)}
+              className="w-full bg-accent text-accent-foreground px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg hover:scale-105 transition-all cursor-pointer animate-glow-pulse"
+            >
+              <p className="text-lg md:text-xl lg:text-2xl font-bold">Прицеп Титан 2013-05</p>
+              <p className="text-base md:text-lg">со СКИДКОЙ 10%</p>
+            </button>
+
             <div className="relative bg-card/95 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-xl border-2 border-primary/30 animate-fade-in">
               {/* Glowing border effect */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 blur-xl -z-10"></div>
