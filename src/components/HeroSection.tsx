@@ -265,22 +265,23 @@ export const HeroSection = () => {
       <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] z-[1]"></div>
 
       <div className="container mx-auto px-4 py-4 relative z-10">
+        {/* Title */}
+        <div className="animate-fade-in mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Более 50 моделей
+            </span>
+            <br />
+            <span className="relative">
+              легковых прицепов!
+              <Sparkles className="absolute -top-2 -right-10 w-6 h-6 text-accent animate-pulse" />
+            </span>
+          </h1>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-6 items-start">
-          {/* Left Section: Title and Product Card */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Title */}
-            <div className="animate-fade-in">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
-                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Более 50 моделей
-                </span>
-                <br />
-                <span className="relative">
-                  легковых прицепов!
-                  <Sparkles className="absolute -top-2 -right-10 w-6 h-6 text-accent animate-pulse" />
-                </span>
-              </h1>
-            </div>
+          {/* Left Section: Product Card */}
+          <div className="lg:col-span-2">
 
             {/* Product Card with Timer */}
             <div 
