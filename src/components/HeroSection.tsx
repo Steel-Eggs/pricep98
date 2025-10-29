@@ -257,27 +257,27 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative h-screen flex items-center overflow-hidden">
       {/* 3D Background */}
       <div ref={canvasRef} className="absolute inset-0 z-0" />
       
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] z-[1]"></div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="container mx-auto px-4 py-4 relative z-10">
+        <div className="grid lg:grid-cols-3 gap-6 items-start">
           {/* Left Section: Title and Product Card */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-4">
             {/* Title */}
             <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
                 <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Более 50 моделей
                 </span>
                 <br />
                 <span className="relative">
                   легковых прицепов!
-                  <Sparkles className="absolute -top-2 -right-10 w-8 h-8 text-accent animate-pulse" />
+                  <Sparkles className="absolute -top-2 -right-10 w-6 h-6 text-accent animate-pulse" />
                 </span>
               </h1>
             </div>
@@ -293,7 +293,7 @@ export const HeroSection = () => {
               </div>
 
               {/* Product Image */}
-              <div className="relative aspect-[16/9] bg-secondary overflow-hidden">
+              <div className="relative aspect-[16/8] bg-secondary overflow-hidden">
                 {!imageLoaded && (
                   <div className="absolute inset-0 animate-pulse bg-muted"></div>
                 )}
@@ -309,7 +309,7 @@ export const HeroSection = () => {
               </div>
 
               {/* Timer - Compact Horizontal */}
-              <div className="bg-gradient-to-r from-primary via-accent to-primary p-4">
+              <div className="bg-gradient-to-r from-primary via-accent to-primary p-3">
                 <p className="text-white text-center text-sm font-semibold mb-2">
                   ⏰ До конца акции осталось:
                 </p>
@@ -322,7 +322,7 @@ export const HeroSection = () => {
                   ].map((item, idx) => (
                     <div key={idx} className="text-center">
                       <div className="bg-white/90 rounded-lg p-2 mb-1">
-                        <span className="text-2xl md:text-3xl font-black text-primary">
+                        <span className="text-xl md:text-2xl font-black text-primary">
                           {String(item.value).padStart(2, "0")}
                         </span>
                       </div>
@@ -335,23 +335,23 @@ export const HeroSection = () => {
               </div>
 
               {/* Product Details */}
-              <div className="p-6">
+              <div className="p-4">
                 <span className="inline-block bg-primary/10 text-primary text-xs font-medium px-3 py-1 rounded-full mb-3">
                   {titanProduct.availability}
                 </span>
                 
-                <h3 className="font-bold text-2xl mb-4 group-hover:text-primary transition-colors">
+                <h3 className="font-bold text-xl mb-4 group-hover:text-primary transition-colors">
                   {titanProduct.name}
                 </h3>
 
-                <div className="flex items-end justify-between mb-6">
+                <div className="flex items-end justify-between mb-4">
                   <div>
                     {titanProduct.oldPrice && (
                       <p className="text-base text-muted-foreground line-through">
                         {titanProduct.oldPrice}
                       </p>
                     )}
-                    <p className="text-3xl md:text-4xl font-bold text-foreground">
+                    <p className="text-2xl md:text-3xl font-bold text-foreground">
                       {titanProduct.price}
                     </p>
                   </div>
@@ -360,7 +360,6 @@ export const HeroSection = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <Button 
                     variant="outline" 
-                    size="lg"
                     className="hover:bg-primary hover:text-primary-foreground transition-all"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -371,7 +370,6 @@ export const HeroSection = () => {
                   </Button>
                   <Button 
                     variant="default"
-                    size="lg"
                     className="bg-accent hover:bg-accent-hover transition-all"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -387,14 +385,14 @@ export const HeroSection = () => {
 
           {/* Right Section: Contact Form */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-card/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border-2 border-primary/30 animate-fade-in">
+            <div className="sticky top-4 bg-card/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border-2 border-primary/30 animate-fade-in">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 blur-xl -z-10"></div>
               
-              <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold mb-4 text-center bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Отправить заявку
               </h3>
               
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <Label htmlFor="hero-name" className="text-sm font-semibold">Имя</Label>
                   <Input
@@ -402,7 +400,7 @@ export const HeroSection = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ваше имя"
-                    className="mt-2 h-12"
+                    className="mt-2 h-10"
                   />
                 </div>
                 
@@ -413,7 +411,7 @@ export const HeroSection = () => {
                     value={phone}
                     onChange={handlePhoneChange}
                     placeholder="+7 (___) ___-__-__"
-                    className="mt-2 h-12"
+                    className="mt-2 h-10"
                   />
                 </div>
                 
@@ -431,7 +429,7 @@ export const HeroSection = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-accent hover:bg-accent-hover transition-all shadow-lg text-base font-semibold"
+                  className="w-full h-10 bg-accent hover:bg-accent-hover transition-all shadow-lg text-base font-semibold"
                 >
                   Отправить
                 </Button>
