@@ -40,6 +40,12 @@ const TENT_IMAGES: Record<TentType, string> = {
   "sloped": trailerSloped
 };
 
+const TENT_PRICES: Record<TentType, number> = {
+  "none": -20000,
+  "h-1220": 0,
+  "sloped": 5000
+};
+
 const ACCESSORIES: Accessory[] = [
   { id: "acc1", name: "Поворотный кронштейн опорного колеса", price: 2800 },
   { id: "acc2", name: "Дополнительное колесо R13", price: 3500 },
@@ -58,12 +64,18 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
 
   const totalPrice = useMemo(() => {
     let total = basePrice;
+    
+    // Add tent price
+    total += TENT_PRICES[selectedTent];
+    
+    // Add accessories prices
     selectedAccessories.forEach(accId => {
       const accessory = ACCESSORIES.find(a => a.id === accId);
       if (accessory) total += accessory.price;
     });
+    
     return total;
-  }, [basePrice, selectedAccessories]);
+  }, [basePrice, selectedTent, selectedAccessories]);
 
   if (!product) return null;
 
@@ -282,25 +294,28 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
                     type="button"
                     variant={selectedTent === "none" ? "default" : "outline"}
                     onClick={() => setSelectedTent("none")}
-                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5 flex justify-between items-center"
                   >
-                    Нет
+                    <span>Нет</span>
+                    <span className="text-xs opacity-70">-20 000 ₽</span>
                   </Button>
                   <Button
                     type="button"
                     variant={selectedTent === "h-1220" ? "default" : "outline"}
                     onClick={() => setSelectedTent("h-1220")}
-                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5 flex justify-between items-center"
                   >
-                    h-1220
+                    <span>h-1220</span>
+                    <span className="text-xs opacity-70">базовая</span>
                   </Button>
                   <Button
                     type="button"
                     variant={selectedTent === "sloped" ? "default" : "outline"}
                     onClick={() => setSelectedTent("sloped")}
-                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5 flex justify-between items-center"
                   >
-                    h-1220 скос
+                    <span>h-1220 скос</span>
+                    <span className="text-xs opacity-70">+5 000 ₽</span>
                   </Button>
                 </div>
               </div>
