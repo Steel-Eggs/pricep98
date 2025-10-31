@@ -1,4 +1,3 @@
-import { X } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import trailerImage from "@/assets/trailer-hero.webp";
+import trailerNoTent from "@/assets/trailer-no-tent.webp";
+import trailerH1220 from "@/assets/trailer-tent-h1220.webp";
+import trailerSloped from "@/assets/trailer-tent-sloped.webp";
 
 interface Product {
   id: string;
@@ -23,7 +24,9 @@ interface ProductModalProps {
   onClose: () => void;
 }
 
-type TentType = "h-1220" | "none" | "sloped";
+type WheelType = "R13" | "R16";
+type HubType = "VAZ";
+type TentType = "none" | "h-1220" | "sloped";
 
 interface Accessory {
   id: string;
@@ -32,20 +35,22 @@ interface Accessory {
 }
 
 const TENT_IMAGES: Record<TentType, string> = {
-  "h-1220": trailerImage, // Заменить на 3519-32-31-1000.webp
-  "none": trailerImage,    // Заменить на 3519-32-00-1000.webp
-  "sloped": trailerImage   // Заменить на 3519-32-41-1000.webp
+  "h-1220": trailerH1220,
+  "none": trailerNoTent,
+  "sloped": trailerSloped
 };
 
 const ACCESSORIES: Accessory[] = [
-  { id: "acc1", name: "Дополнительное колесо R13", price: 3500 },
-  { id: "acc2", name: "Усиленная сцепка", price: 4200 },
-  { id: "acc3", name: "Противооткатные упоры", price: 1800 },
-  { id: "acc4", name: "Запасной тент", price: 8500 },
-  { id: "acc5", name: "Светодиодная подсветка", price: 2400 }
+  { id: "acc1", name: "Поворотный кронштейн опорного колеса", price: 2800 },
+  { id: "acc2", name: "Дополнительное колесо R13", price: 3500 },
+  { id: "acc3", name: "Усиленная сцепка", price: 4200 },
+  { id: "acc4", name: "Противооткатные упоры", price: 1800 },
+  { id: "acc5", name: "Запасной тент", price: 8500 }
 ];
 
 export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
+  const [selectedWheel, setSelectedWheel] = useState<WheelType>("R13");
+  const [selectedHub, setSelectedHub] = useState<HubType>("VAZ");
   const [selectedTent, setSelectedTent] = useState<TentType>("h-1220");
   const [selectedAccessories, setSelectedAccessories] = useState<Set<string>>(new Set());
 
@@ -75,11 +80,8 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto animate-scale-in">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6">
           <h2 className="text-3xl font-bold text-foreground">{product.name}</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
-            <X className="w-6 h-6" />
-          </button>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -120,45 +122,69 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
               <p className="text-sm font-medium text-primary">{product.availability}</p>
             </div>
 
+            {/* Wheel Selection */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-base text-foreground">Колёса</h3>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={selectedWheel === "R13" ? "default" : "outline"}
+                  onClick={() => setSelectedWheel("R13")}
+                  className="flex-1"
+                >
+                  R13
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedWheel === "R16" ? "default" : "outline"}
+                  onClick={() => setSelectedWheel("R16")}
+                  className="flex-1"
+                >
+                  R16
+                </Button>
+              </div>
+            </div>
+
+            {/* Hub Selection */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-base text-foreground">Ступица</h3>
+              <Button
+                type="button"
+                variant="default"
+                className="w-full"
+              >
+                ВАЗ
+              </Button>
+            </div>
+
             {/* Tent Type Selection */}
             <div className="space-y-3">
-              <h3 className="font-bold text-lg text-foreground">Тип тента:</h3>
-              <div className="space-y-2">
-                <Label className="flex items-center space-x-3 cursor-pointer p-3 border rounded-lg hover:bg-accent/5 transition-colors">
-                  <input
-                    type="radio"
-                    name="tent"
-                    value="h-1220"
-                    checked={selectedTent === "h-1220"}
-                    onChange={() => setSelectedTent("h-1220")}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm">С тентом h-1220 (по умолчанию)</span>
-                </Label>
-                
-                <Label className="flex items-center space-x-3 cursor-pointer p-3 border rounded-lg hover:bg-accent/5 transition-colors">
-                  <input
-                    type="radio"
-                    name="tent"
-                    value="none"
-                    checked={selectedTent === "none"}
-                    onChange={() => setSelectedTent("none")}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm">Нет тента</span>
-                </Label>
-                
-                <Label className="flex items-center space-x-3 cursor-pointer p-3 border rounded-lg hover:bg-accent/5 transition-colors">
-                  <input
-                    type="radio"
-                    name="tent"
-                    value="sloped"
-                    checked={selectedTent === "sloped"}
-                    onChange={() => setSelectedTent("sloped")}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm">Тент со скосом</span>
-                </Label>
+              <h3 className="font-bold text-base text-foreground">Тент и каркас</h3>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={selectedTent === "none" ? "default" : "outline"}
+                  onClick={() => setSelectedTent("none")}
+                  className="flex-1"
+                >
+                  Нет
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedTent === "h-1220" ? "default" : "outline"}
+                  onClick={() => setSelectedTent("h-1220")}
+                  className="flex-1"
+                >
+                  h-1220
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedTent === "sloped" ? "default" : "outline"}
+                  onClick={() => setSelectedTent("sloped")}
+                  className="flex-1"
+                >
+                  h-1220 скос
+                </Button>
               </div>
             </div>
 
@@ -188,10 +214,10 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
 
             {/* Action Button */}
             <Button 
-              className="w-full bg-accent hover:bg-accent/90 transition-all shadow-md"
+              className="w-full transition-all shadow-md"
               size="lg"
             >
-              Узнать подробности
+              ЗАКАЗАТЬ
             </Button>
           </div>
         </div>
@@ -205,84 +231,104 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
           
           <TabsContent value="description" className="space-y-4 mt-6">
             <div className="prose prose-sm max-w-none">
-              <h3 className="text-lg font-bold text-foreground mb-3">О товаре</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Легковой прицеп — надёжное решение для перевозки грузов. Прочная конструкция 
-                с оцинкованным кузовом гарантирует долговечность и защиту от коррозии. 
-                Рессорная подвеска обеспечивает плавный ход и безопасность груза.
+                "Титан 2ос 3519" - лучше всех справляется с большими нагрузками и идеально 
+                подходит для перевозки тяжёлых грузов: перевозка спец техники, грузоперевозки, 
+                бизнес.
               </p>
+              
+              <h4 className="text-base font-bold text-foreground mt-4 mb-2">Особенности модели:</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>- внутренний размер кузова 3.5 метра в длину и 1.9 метра в ширину для перевозок всего и массивного;</li>
+                <li>- эргономичная и лёгкая конструкция позволяет экономить на топливе;</li>
+                <li>- тормозная система прицепа обеспечивает безопасность и надёжность автомобиля;</li>
+                <li>- о коррозии можно забыть: на раму и дышло наносится защитное покрытие методом горячей оцинковки;</li>
+                <li>- дышло профильная 80х60х2 мм., а рама - 60х40х3 мм.;</li>
+                <li>- в комплекте идут 4 х листовые рессоры.</li>
+              </ul>
+
+              <p className="text-muted-foreground leading-relaxed mt-4">
+                Передний и задний борт - откидные. На дно прицепа устанавливается влагостойкая 
+                фанера толщиной 9 мм.
+              </p>
+
               <p className="text-muted-foreground leading-relaxed mt-3">
-                В стандартной комплектации прицеп оснащён тормозной системой наката, 
-                полным комплектом светотехники и всеми необходимыми документами для 
-                регистрации в ГИБДД.
+                Официальная гарантия от нашего завода - 12 месяцев!
+              </p>
+
+              <p className="text-muted-foreground leading-relaxed mt-3 font-medium">
+                Будем рады видеть вас в числе покупателей нашей компании!
               </p>
             </div>
           </TabsContent>
           
           <TabsContent value="specifications" className="mt-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Технические характеристики</h3>
-              <div className="grid md:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Грузоподъёмность:</span>
-                  <span className="font-medium">до 750 кг</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Размеры кузова:</span>
-                  <span className="font-medium">2.0 × 1.3 м</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Высота борта:</span>
-                  <span className="font-medium">0.35 м</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Колёса:</span>
-                  <span className="font-medium">R13</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Тормозная система:</span>
-                  <span className="font-medium">наката</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Подвеска:</span>
-                  <span className="font-medium">рессорная</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Покрытие кузова:</span>
-                  <span className="font-medium">оцинковка</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Гарантия:</span>
-                  <span className="font-medium">12 месяцев</span>
-                </div>
-              </div>
-              
-              <div className="mt-6 pt-6 border-t border-border">
-                <h4 className="font-bold text-foreground mb-3">Комплектация:</h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Колёса R13 с покрышками</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Тент и дуги</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Полный комплект светотехники</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Документы для регистрации</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Инструкция по эксплуатации</span>
-                  </li>
-                </ul>
-              </div>
-            </Card>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-3 text-muted-foreground">Внешние размеры кузова, мм.</td>
+                    <td className="py-3 font-medium text-right">3500х1960х330</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </TabsContent>
         </Tabs>
       </DialogContent>
