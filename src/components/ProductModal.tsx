@@ -54,9 +54,7 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
   const [selectedTent, setSelectedTent] = useState<TentType>("h-1220");
   const [selectedAccessories, setSelectedAccessories] = useState<Set<string>>(new Set());
 
-  if (!product) return null;
-
-  const basePrice = parseInt(product.price.replace(/\D/g, ""));
+  const basePrice = product ? parseInt(product.price.replace(/\D/g, "")) : 0;
 
   const totalPrice = useMemo(() => {
     let total = basePrice;
@@ -66,6 +64,8 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
     });
     return total;
   }, [basePrice, selectedAccessories]);
+
+  if (!product) return null;
 
   const handleAccessoryToggle = (accId: string) => {
     const newSet = new Set(selectedAccessories);
