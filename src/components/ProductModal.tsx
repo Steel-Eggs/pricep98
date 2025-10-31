@@ -237,71 +237,74 @@ export const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) =>
               <p className="text-sm font-medium text-primary">{product.availability}</p>
             </div>
 
-            {/* Wheel Selection */}
-            <div className="space-y-3">
-              <h3 className="font-bold text-base text-foreground">Колёса</h3>
-              <div className="flex gap-2">
+            {/* Configuration Section */}
+            <Card className="p-4 space-y-4 border-2 border-border hover:border-primary/20 transition-colors bg-gradient-to-br from-card to-card/50">
+              {/* Wheel Selection */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-base text-foreground">Колёса</h3>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={selectedWheel === "R13" ? "default" : "outline"}
+                    onClick={() => setSelectedWheel("R13")}
+                    className="flex-1 hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    R13
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={selectedWheel === "R16" ? "default" : "outline"}
+                    onClick={() => setSelectedWheel("R16")}
+                    className="flex-1 hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    R16
+                  </Button>
+                </div>
+              </div>
+
+              {/* Hub Selection */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-base text-foreground">Ступица</h3>
                 <Button
                   type="button"
-                  variant={selectedWheel === "R13" ? "default" : "outline"}
-                  onClick={() => setSelectedWheel("R13")}
-                  className="flex-1 hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  variant="default"
+                  className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
                 >
-                  R13
-                </Button>
-                <Button
-                  type="button"
-                  variant={selectedWheel === "R16" ? "default" : "outline"}
-                  onClick={() => setSelectedWheel("R16")}
-                  className="flex-1 hover:shadow-lg transition-all hover:-translate-y-0.5"
-                >
-                  R16
+                  ВАЗ
                 </Button>
               </div>
-            </div>
 
-            {/* Hub Selection */}
-            <div className="space-y-3">
-              <h3 className="font-bold text-base text-foreground">Ступица</h3>
-              <Button
-                type="button"
-                variant="default"
-                className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
-              >
-                ВАЗ
-              </Button>
-            </div>
-
-            {/* Tent Type Selection */}
-            <div className="space-y-3">
-              <h3 className="font-bold text-base text-foreground">Тент и каркас</h3>
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  variant={selectedTent === "none" ? "default" : "outline"}
-                  onClick={() => setSelectedTent("none")}
-                  className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
-                >
-                  Нет
-                </Button>
-                <Button
-                  type="button"
-                  variant={selectedTent === "h-1220" ? "default" : "outline"}
-                  onClick={() => setSelectedTent("h-1220")}
-                  className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
-                >
-                  h-1220
-                </Button>
-                <Button
-                  type="button"
-                  variant={selectedTent === "sloped" ? "default" : "outline"}
-                  onClick={() => setSelectedTent("sloped")}
-                  className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
-                >
-                  h-1220 скос
-                </Button>
+              {/* Tent Type Selection */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-base text-foreground">Тент и каркас</h3>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant={selectedTent === "none" ? "default" : "outline"}
+                    onClick={() => setSelectedTent("none")}
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    Нет
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={selectedTent === "h-1220" ? "default" : "outline"}
+                    onClick={() => setSelectedTent("h-1220")}
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    h-1220
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={selectedTent === "sloped" ? "default" : "outline"}
+                    onClick={() => setSelectedTent("sloped")}
+                    className="w-full hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    h-1220 скос
+                  </Button>
+                </div>
               </div>
-            </div>
+            </Card>
 
             {/* Accessories */}
             <div className="space-y-3">
