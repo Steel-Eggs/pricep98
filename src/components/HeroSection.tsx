@@ -334,11 +334,10 @@ export const HeroSection = () => {
       <div className="container mx-auto px-4 py-2 -mt-10 pb-8 md:pb-12 relative z-10">
         {/* Title */}
         <div className="animate-fade-in mb-3">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground whitespace-nowrap">
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              Более 50 моделей
+              Более 50 моделей{" "}
             </span>
-            <br />
             <span className="relative">
               легковых прицепов!
               <Sparkles className="absolute -top-2 -right-10 w-8 h-8 text-accent animate-pulse" />
