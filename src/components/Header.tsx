@@ -105,7 +105,7 @@ export const Header = () => {
         )}
       </div>
 
-      <CallbackModal isOpen={isCallbackOpen} onClose={() => setIsCallbackOpen(false)} />
+      <CallbackModal open={isCallbackOpen} onOpenChange={(open) => setIsCallbackOpen(open)} />
     </header>
   );
 };

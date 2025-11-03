@@ -8,11 +8,11 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 interface CallbackModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const CallbackModal = ({ isOpen, onClose }: CallbackModalProps) => {
+export const CallbackModal = ({ open, onOpenChange }: CallbackModalProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [agreed, setAgreed] = useState(false);
@@ -49,15 +49,15 @@ export const CallbackModal = ({ isOpen, onClose }: CallbackModalProps) => {
     setName("");
     setPhone("");
     setAgreed(false);
-    onClose();
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md animate-scale-in">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Обратный звонок</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => onOpenChange(false)} className="text-muted-foreground hover:text-foreground">
             <X className="w-5 h-5" />
           </button>
         </div>

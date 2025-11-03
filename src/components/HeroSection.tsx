@@ -29,12 +29,14 @@ export const HeroSection = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const titanProduct = {
-    id: "11",
-    name: "Титан 2013-05",
-    price: "от 155 000 ₽",
-    oldPrice: "от 172 000 ₽",
+    id: "5cd020b6-8fca-43fe-a749-39a3a5ecab44",
+    name: "Титан 2513-03",
+    base_price: 155000,
+    old_price: 172000,
     availability: "В наличии",
-    discount: "СКИДКА 10%"
+    discount_label: "СКИДКА 10%",
+    category_id: "760c8ec0-e85a-4aff-b27b-328d0edbf3db",
+    base_image_url: "https://pricepcentr.ru/upload/dev2fun.imagecompress/webp/products/2513-A/2513-31-21-1000-A.webp"
   };
 
   // Timer countdown
@@ -290,7 +292,7 @@ export const HeroSection = () => {
             >
               {/* Discount Badge - Right Side */}
               <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-6 py-3 rounded-lg text-base font-bold z-20 shadow-lg animate-pulse">
-                {titanProduct.discount}
+                {titanProduct.discount_label}
               </div>
 
               {/* Product Image with Overlay Info */}
@@ -320,13 +322,13 @@ export const HeroSection = () => {
                     {titanProduct.name}
                   </h3>
                   <div className="flex items-end gap-3 mb-3">
-                    {titanProduct.oldPrice && (
+                    {titanProduct.old_price && (
                       <p className="text-lg md:text-xl text-white/70 line-through drop-shadow-lg">
-                        {titanProduct.oldPrice}
+                        от {titanProduct.old_price.toLocaleString('ru-RU')} ₽
                       </p>
                     )}
                     <p className="text-4xl md:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
-                      {titanProduct.price}
+                      от {titanProduct.base_price.toLocaleString('ru-RU')} ₽
                     </p>
                   </div>
                 </div>
@@ -433,8 +435,8 @@ export const HeroSection = () => {
       {/* Product Modal */}
       <ProductModal 
         product={titanProduct}
-        isOpen={isProductModalOpen}
-        onClose={() => setIsProductModalOpen(false)}
+        open={isProductModalOpen}
+        onOpenChange={(open) => setIsProductModalOpen(open)}
       />
     </section>
   );
