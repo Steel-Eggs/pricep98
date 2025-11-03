@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CategoriesManager } from '@/components/admin/CategoriesManager';
 import { ProductsManager } from '@/components/admin/ProductsManager';
 import { AccessoriesManager } from '@/components/admin/AccessoriesManager';
-import { LogOut, Package, Tags, Wrench } from 'lucide-react';
+import { TentsManager } from '@/components/admin/TentsManager';
+import { LogOut, Package, Tags, Wrench, Tent } from 'lucide-react';
 import logoMono from '@/assets/logo-mono.png';
 import { toast } from 'sonner';
 
@@ -41,7 +42,7 @@ const AdminPage = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="categories" className="flex items-center gap-2">
               <Tags className="w-4 h-4" />
               Категории
@@ -49,6 +50,10 @@ const AdminPage = () => {
             <TabsTrigger value="products" className="flex items-center gap-2">
               <Package className="w-4 h-4" />
               Прицепы
+            </TabsTrigger>
+            <TabsTrigger value="tents" className="flex items-center gap-2">
+              <Tent className="w-4 h-4" />
+              Тенты
             </TabsTrigger>
             <TabsTrigger value="accessories" className="flex items-center gap-2">
               <Wrench className="w-4 h-4" />
@@ -62,6 +67,10 @@ const AdminPage = () => {
 
           <TabsContent value="products">
             <ProductsManager />
+          </TabsContent>
+
+          <TabsContent value="tents">
+            <TentsManager />
           </TabsContent>
 
           <TabsContent value="accessories">

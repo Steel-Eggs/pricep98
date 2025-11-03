@@ -42,11 +42,28 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
   const [newHubOption, setNewHubOption] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [productTents, setProductTents] = useState<Array<{
+    tent_id: string;
+    price: number;
+    is_default: boolean;
+    image_file?: File;
+    image_preview?: string;
+    image_url?: string;
+  }>>([]);
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const { data, error } = await supabase.from('categories').select('*').order('display_order');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: tents } = useQuery({
+    queryKey: ['tents'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('tents').select('*').order('default_price');
       if (error) throw error;
       return data;
     },
@@ -72,6 +89,7 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
       
       setImagePreview(product.base_image_url || null);
       loadSpecifications(product.id);
+      loadProductTents(product.id);
     } else {
       resetForm();
     }
@@ -86,6 +104,23 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
     
     if (!error && data) {
       setSpecifications(data);
+    }
+  };
+
+  const loadProductTents = async (productId: string) => {
+    const { data, error } = await supabase
+      .from('product_tents')
+      .select('*')
+      .eq('product_id', productId);
+    
+    if (!error && data) {
+      setProductTents(data.map(pt => ({
+        tent_id: pt.tent_id,
+        price: pt.price,
+        is_default: pt.is_default,
+        image_url: pt.image_url || '',
+        image_preview: pt.image_url || '',
+      })));
     }
   };
 
@@ -108,6 +143,7 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
     setSpecifications([]);
     setImageFile(null);
     setImagePreview(null);
+    setProductTents([]);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,6 +225,22 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
             specifications.map(spec => ({ ...spec, product_id: product.id }))
           );
         }
+
+        // Update product_tents
+        await supabase.from('product_tents').delete().eq('product_id', product.id);
+        for (const pt of productTents) {
+          let tentImageUrl = pt.image_url;
+          if (pt.image_file) {
+            tentImageUrl = await uploadImage(pt.image_file);
+          }
+          await supabase.from('product_tents').insert({
+            product_id: product.id,
+            tent_id: pt.tent_id,
+            price: pt.price,
+            is_default: pt.is_default,
+            image_url: tentImageUrl || null,
+          });
+        }
       } else {
         const { data: newProduct, error } = await supabase
           .from('products')
@@ -201,6 +253,23 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
           await supabase.from('specifications').insert(
             specifications.map(spec => ({ ...spec, product_id: newProduct.id }))
           );
+        }
+
+        // Insert product_tents for new product
+        if (productTents.length > 0 && newProduct) {
+          for (const pt of productTents) {
+            let tentImageUrl = pt.image_url;
+            if (pt.image_file) {
+              tentImageUrl = await uploadImage(pt.image_file);
+            }
+            await supabase.from('product_tents').insert({
+              product_id: newProduct.id,
+              tent_id: pt.tent_id,
+              price: pt.price,
+              is_default: pt.is_default,
+              image_url: tentImageUrl || null,
+            });
+          }
         }
       }
     },
@@ -263,6 +332,74 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
     setSpecifications(specifications.filter((_, i) => i !== index));
   };
 
+  const addProductTent = (tentId: string) => {
+    const tent = tents?.find(t => t.id === tentId);
+    if (!tent) return;
+    
+    const exists = productTents.some(pt => pt.tent_id === tentId);
+    if (exists) {
+      toast.error('Этот тент уже добавлен');
+      return;
+    }
+
+    setProductTents([...productTents, {
+      tent_id: tentId,
+      price: tent.default_price,
+      is_default: productTents.length === 0,
+      image_url: '',
+      image_preview: '',
+    }]);
+  };
+
+  const removeProductTent = (tentId: string) => {
+    setProductTents(productTents.filter(pt => pt.tent_id !== tentId));
+  };
+
+  const updateProductTent = (tentId: string, field: string, value: any) => {
+    setProductTents(productTents.map(pt => 
+      pt.tent_id === tentId ? { ...pt, [field]: value } : pt
+    ));
+  };
+
+  const setDefaultTent = (tentId: string) => {
+    setProductTents(productTents.map(pt => ({
+      ...pt,
+      is_default: pt.tent_id === tentId
+    })));
+  };
+
+  const handleTentImageChange = (tentId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Пожалуйста, выберите изображение');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Размер файла не должен превышать 5 МБ');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductTents(productTents.map(pt => 
+          pt.tent_id === tentId 
+            ? { ...pt, image_file: file, image_preview: reader.result as string }
+            : pt
+        ));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeTentImage = (tentId: string) => {
+    setProductTents(productTents.map(pt => 
+      pt.tent_id === tentId 
+        ? { ...pt, image_file: undefined, image_preview: '', image_url: '' }
+        : pt
+    ));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -271,9 +408,10 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
         </DialogHeader>
 
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="basic">Основное</TabsTrigger>
             <TabsTrigger value="config">Конфигурация</TabsTrigger>
+            <TabsTrigger value="tents">Тенты</TabsTrigger>
             <TabsTrigger value="description">Описание</TabsTrigger>
             <TabsTrigger value="specs">Характеристики</TabsTrigger>
           </TabsList>
@@ -446,6 +584,103 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
                   </Button>
                 </div>
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="tents" className="space-y-4">
+            <div className="space-y-2">
+              <Label>Добавить тент</Label>
+              <Select onValueChange={addProductTent}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите тент" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tents?.filter(t => !productTents.some(pt => pt.tent_id === t.id)).map((tent) => (
+                    <SelectItem key={tent.id} value={tent.id}>
+                      {tent.name} ({tent.default_price} ₽)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-4">
+              {productTents.map((pt) => {
+                const tent = tents?.find(t => t.id === pt.tent_id);
+                return (
+                  <div key={pt.tent_id} className="border rounded-lg p-4 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-semibold">{tent?.name}</h4>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeProductTent(pt.tent_id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Цена (₽)</Label>
+                      <Input
+                        type="number"
+                        value={pt.price}
+                        onChange={(e) => updateProductTent(pt.tent_id, 'price', parseFloat(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={pt.is_default}
+                        onCheckedChange={() => setDefaultTent(pt.tent_id)}
+                      />
+                      <Label>По умолчанию</Label>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Изображение тента</Label>
+                      {pt.image_preview ? (
+                        <div className="relative">
+                          <img
+                            src={pt.image_preview}
+                            alt="Tent preview"
+                            className="w-full h-48 object-contain rounded-lg border"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={() => removeTentImage(pt.tent_id)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                          <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                          <Label htmlFor={`tent-image-${pt.tent_id}`} className="cursor-pointer">
+                            <div className="text-sm text-muted-foreground mb-2">
+                              Нажмите для выбора изображения
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              PNG, JPG, WEBP до 5 МБ
+                            </div>
+                          </Label>
+                          <Input
+                            id={`tent-image-${pt.tent_id}`}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleTentImageChange(pt.tent_id, e)}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </TabsContent>
 
