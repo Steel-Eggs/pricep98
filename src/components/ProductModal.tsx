@@ -359,6 +359,7 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
       <CallbackModal
         open={showCallbackModal}
         onOpenChange={setShowCallbackModal}
+        onSubmit={handleCallbackSubmit}
       />
     </>
   );
