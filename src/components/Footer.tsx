@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logoMono from "@/assets/logo-mono.png";
 import developerLogo from "@/assets/developer-logo.png";
@@ -102,6 +103,9 @@ export const Footer = () => {
               </a>
               <a href="#" className="block hover:text-background transition-colors">
                 Пользовательское соглашение
+              </a>
+              <a href="/auth" className="block hover:text-background transition-colors">
+                Админ-панель
               </a>
             </div>
           </div>
