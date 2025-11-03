@@ -300,7 +300,7 @@ export const HeroSection = () => {
                   <div className="absolute inset-0 animate-pulse bg-muted"></div>
                 )}
                 <img
-                  src={trailerImage}
+                  src={heroProduct.base_image_url || trailerImage}
                   alt={heroProduct.name}
                   className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
                     imageLoaded ? "opacity-100" : "opacity-0"
