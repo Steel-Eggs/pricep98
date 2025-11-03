@@ -14,7 +14,259 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accessories: {
+        Row: {
+          created_at: string | null
+          default_price: number
+          display_order: number
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          default_price: number
+          display_order?: number
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          default_price?: number
+          display_order?: number
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      product_accessories: {
+        Row: {
+          accessory_id: string
+          created_at: string | null
+          id: string
+          is_available: boolean | null
+          price: number
+          product_id: string
+        }
+        Insert: {
+          accessory_id: string
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          price: number
+          product_id: string
+        }
+        Update: {
+          accessory_id?: string
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          price?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_accessories_accessory_id_fkey"
+            columns: ["accessory_id"]
+            isOneToOne: false
+            referencedRelation: "accessories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_accessories_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_tents: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_default: boolean | null
+          price: number
+          product_id: string
+          tent_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_default?: boolean | null
+          price: number
+          product_id: string
+          tent_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_default?: boolean | null
+          price?: number
+          product_id?: string
+          tent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_tents_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tents_tent_id_fkey"
+            columns: ["tent_id"]
+            isOneToOne: false
+            referencedRelation: "tents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          availability: string
+          base_image_url: string | null
+          base_price: number
+          category_id: string
+          created_at: string | null
+          description: string | null
+          discount_label: string | null
+          features: Json | null
+          hub_options: Json | null
+          id: string
+          name: string
+          old_price: number | null
+          updated_at: string | null
+          wheel_options: Json | null
+        }
+        Insert: {
+          availability?: string
+          base_image_url?: string | null
+          base_price: number
+          category_id: string
+          created_at?: string | null
+          description?: string | null
+          discount_label?: string | null
+          features?: Json | null
+          hub_options?: Json | null
+          id?: string
+          name: string
+          old_price?: number | null
+          updated_at?: string | null
+          wheel_options?: Json | null
+        }
+        Update: {
+          availability?: string
+          base_image_url?: string | null
+          base_price?: number
+          category_id?: string
+          created_at?: string | null
+          description?: string | null
+          discount_label?: string | null
+          features?: Json | null
+          hub_options?: Json | null
+          id?: string
+          name?: string
+          old_price?: number | null
+          updated_at?: string | null
+          wheel_options?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      specifications: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          id: string
+          product_id: string
+          spec_name: string
+          spec_value: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          product_id: string
+          spec_name: string
+          spec_value: string
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          product_id?: string
+          spec_name?: string
+          spec_value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "specifications_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tents: {
+        Row: {
+          created_at: string | null
+          default_price: number
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          default_price?: number
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          default_price?: number
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
