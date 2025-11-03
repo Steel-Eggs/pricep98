@@ -14,29 +14,49 @@ interface CallbackModalProps {
 
 export const CallbackModal = ({ open, onOpenChange }: CallbackModalProps) => {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+7 (");
   const [agreed, setAgreed] = useState(false);
 
   const formatPhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, "").substring(0, 10); // Ограничение на 10 цифр
+    // Удаляем все нечисловые символы
+    const cleaned = value.replace(/\D/g, "");
     
-    if (!cleaned) return ""; // Если нет цифр, возвращаем пустую строку
+    // Убираем префикс "7" если он есть в начале (это код страны, не часть номера)
+    const phoneNumber = cleaned.startsWith('7') ? cleaned.slice(1) : cleaned;
     
-    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
+    // Ограничиваем до 10 цифр (номер без кода страны)
+    const limited = phoneNumber.substring(0, 10);
+    
+    // Форматируем
+    const match = limited.match(/^(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
     
     if (match) {
       let formatted = "+7";
-      if (match[1]) formatted += ` (${match[1]}`;
-      if (match[2]) formatted += `) ${match[2]}`;
+      if (match[1]) {
+        formatted += ` (${match[1]}`;
+        if (match[1].length === 3) formatted += ")";
+      } else {
+        formatted += " (";
+      }
+      if (match[2]) formatted += ` ${match[2]}`;
       if (match[3]) formatted += `-${match[3]}`;
       if (match[4]) formatted += `-${match[4]}`;
       return formatted;
     }
-    return "";
+    
+    return "+7 (";
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhone(e.target.value);
+    const input = e.target.value;
+    
+    // Если пользователь пытается удалить "+7 (", не даём это сделать
+    if (input.length < 4) {
+      setPhone("+7 (");
+      return;
+    }
+    
+    const formatted = formatPhone(input);
     setPhone(formatted);
   };
 
@@ -61,7 +81,7 @@ export const CallbackModal = ({ open, onOpenChange }: CallbackModalProps) => {
 
       toast.success("Спасибо! Мы скоро свяжемся с вами");
       setName("");
-      setPhone("");
+      setPhone("+7 (");
       setAgreed(false);
       onOpenChange(false);
     } catch (error) {
