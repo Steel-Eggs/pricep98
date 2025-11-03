@@ -8,7 +8,7 @@ import { CategoriesManager } from '@/components/admin/CategoriesManager';
 import { ProductsManager } from '@/components/admin/ProductsManager';
 import { AccessoriesManager } from '@/components/admin/AccessoriesManager';
 import { TentsManager } from '@/components/admin/TentsManager';
-import { LogOut, Package, Tags, Wrench, Tent } from 'lucide-react';
+import { LogOut, Package, Tags, Wrench, Tent, Home } from 'lucide-react';
 import logoMono from '@/assets/logo-mono.png';
 import { toast } from 'sonner';
 
@@ -32,10 +32,16 @@ const AdminPage = () => {
               <img src={logoMono} alt="ПРИЦЕП98" className="h-8" />
               <h1 className="text-xl font-bold">Административная панель</h1>
             </div>
-            <Button onClick={handleSignOut} variant="outline">
-              <LogOut className="w-4 h-4 mr-2" />
-              Выйти
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={() => navigate('/')} variant="outline">
+                <Home className="w-4 h-4 mr-2" />
+                На сайт
+              </Button>
+              <Button onClick={handleSignOut} variant="outline">
+                <LogOut className="w-4 h-4 mr-2" />
+                Выйти
+              </Button>
+            </div>
           </div>
         </div>
       </header>
