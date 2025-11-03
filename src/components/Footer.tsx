@@ -3,14 +3,17 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logoMono from "@/assets/logo-mono.png";
 import developerLogo from "@/assets/developer-logo.png";
+import { useCategories } from "@/hooks/useCategories";
 
 export const Footer = () => {
+  const { data: categories } = useCategories();
+
   const menuItems = [
-    { label: "Одноосные", href: "#single-axle" },
-    { label: "Двуосные", href: "#dual-axle" },
-    { label: "Для водной техники", href: "#water-tech" },
-    { label: "К квадроциклам", href: "#quad" },
-    { label: "Где купить", href: "#location" },
+    ...(categories?.map(cat => ({
+      label: cat.name,
+      href: `#${cat.slug}`
+    })) || []),
+    { label: "Где купить", href: "#location" }
   ];
 
   return (

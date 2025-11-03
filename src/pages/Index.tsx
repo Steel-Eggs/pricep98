@@ -5,8 +5,11 @@ import { QualityBadge } from "@/components/QualityBadge";
 import { ProductSection } from "@/components/ProductSection";
 import { LocationSection } from "@/components/LocationSection";
 import { Footer } from "@/components/Footer";
+import { useCategories } from "@/hooks/useCategories";
 
 const Index = () => {
+  const { data: categories, isLoading } = useCategories();
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -14,10 +17,14 @@ const Index = () => {
         <HeroSection />
         <BenefitsSection />
         <QualityBadge />
-        <ProductSection id="single-axle" title="Одноосные" categorySlug="single-axle" />
-        <ProductSection id="dual-axle" title="Двухосные" categorySlug="dual-axle" />
-        <ProductSection id="water-tech" title="Прицепы для водной техники" categorySlug="water-tech" />
-        <ProductSection id="quad" title="Прицепы к квадроциклам" categorySlug="quad" />
+        {!isLoading && categories?.map((category) => (
+          <ProductSection 
+            key={category.id}
+            id={category.slug} 
+            title={category.name} 
+            categorySlug={category.slug} 
+          />
+        ))}
         <LocationSection />
       </main>
       <Footer />

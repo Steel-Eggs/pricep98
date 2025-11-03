@@ -3,17 +3,19 @@ import { Phone, MapPin, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { CallbackModal } from "./CallbackModal";
+import { useCategories } from "@/hooks/useCategories";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCallbackOpen, setIsCallbackOpen] = useState(false);
+  const { data: categories } = useCategories();
 
   const menuItems = [
-    { label: "Одноосные", href: "#single-axle" },
-    { label: "Двуосные", href: "#dual-axle" },
-    { label: "Для водной техники", href: "#water-tech" },
-    { label: "К квадроциклам", href: "#quad" },
-    { label: "Где купить", href: "#location" },
+    ...(categories?.map(cat => ({
+      label: cat.name,
+      href: `#${cat.slug}`
+    })) || []),
+    { label: "Где купить", href: "#location" }
   ];
 
   return (
