@@ -2,7 +2,8 @@ name: Deploy to shared hosting (SFTP)
 
 on:
   push:
-    branches: [ main ]   
+    branches: [ main ]
+  workflow_dispatch:  # чтобы можно было запустить вручную из вкладки Actions
 
 jobs:
   build-and-deploy:
