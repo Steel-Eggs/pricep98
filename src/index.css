@@ -52,7 +52,8 @@ All colors MUST be HSL.
   }
 
   @keyframes zoom-slow {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1);
     }
     50% {
@@ -61,11 +62,16 @@ All colors MUST be HSL.
   }
 
   @keyframes glow-pulse {
-    0%, 100% {
-      box-shadow: 0 0 20px hsl(0 84% 60% / 0.5), 0 0 40px hsl(0 84% 60% / 0.3);
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px hsl(0 84% 60% / 0.5),
+        0 0 40px hsl(0 84% 60% / 0.3);
     }
     50% {
-      box-shadow: 0 0 30px hsl(0 84% 60% / 0.7), 0 0 60px hsl(0 84% 60% / 0.5);
+      box-shadow:
+        0 0 30px hsl(0 84% 60% / 0.7),
+        0 0 60px hsl(0 84% 60% / 0.5);
     }
   }
 
@@ -87,7 +93,12 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-sans;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading;
   }
 
