@@ -324,14 +324,14 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative h-screen flex items-start overflow-hidden">
+    <section className="relative min-h-screen md:h-auto lg:h-screen flex items-start overflow-hidden">
       {/* 3D Background */}
       <div ref={canvasRef} className="absolute inset-0 z-0" />
       
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] z-[1]"></div>
 
-      <div className="container mx-auto px-4 pt-24 md:pt-36 lg:pt-24 pb-8 md:pb-12 relative z-10">
+      <div className="container mx-auto px-4 pt-8 md:pt-16 lg:pt-16 pb-8 md:pb-16 lg:pb-12 relative z-10">
         {/* Title */}
         <div className="animate-fade-in mb-3">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground whitespace-nowrap">
