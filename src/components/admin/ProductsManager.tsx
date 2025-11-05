@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Pencil, GripVertical } from 'lucide-react';
+import { Plus, Pencil, GripVertical, Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ProductEditDialog } from './ProductEditDialog';
 import {
   DndContext,
@@ -34,7 +35,7 @@ interface Product {
   categories?: { name: string };
 }
 
-const SortableRow = ({ product, onEdit }: { product: Product; onEdit: (product: Product) => void }) => {
+const SortableRow = ({ product, onEdit, onDelete }: { product: Product; onEdit: (product: Product) => void; onDelete: (product: Product) => void }) => {
   const {
     attributes,
     listeners,
@@ -71,9 +72,14 @@ const SortableRow = ({ product, onEdit }: { product: Product; onEdit: (product: 
       <TableCell>{product.base_price} ₽</TableCell>
       <TableCell>{product.availability}</TableCell>
       <TableCell className="text-right">
-        <Button variant="ghost" size="sm" onClick={() => onEdit(product)}>
-          <Pencil className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-2 justify-end">
+          <Button variant="ghost" size="sm" onClick={() => onEdit(product)}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => onDelete(product)}>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );
@@ -82,6 +88,7 @@ const SortableRow = ({ product, onEdit }: { product: Product; onEdit: (product: 
 export const ProductsManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const queryClient = useQueryClient();
 
   const sensors = useSensors(
@@ -119,6 +126,21 @@ export const ProductsManager = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (productId: string) => {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setDeletingProduct(null);
+    },
+  });
+
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setIsDialogOpen(true);
@@ -127,6 +149,16 @@ export const ProductsManager = () => {
   const handleClose = () => {
     setIsDialogOpen(false);
     setEditingProduct(null);
+  };
+
+  const handleDelete = (product: Product) => {
+    setDeletingProduct(product);
+  };
+
+  const confirmDelete = () => {
+    if (deletingProduct) {
+      deleteMutation.mutate(deletingProduct.id);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -187,6 +219,7 @@ export const ProductsManager = () => {
                   key={product.id}
                   product={product}
                   onEdit={handleEdit}
+                  onDelete={handleDelete}
                 />
               ))}
             </SortableContext>
@@ -199,6 +232,21 @@ export const ProductsManager = () => {
         onClose={handleClose}
         product={editingProduct}
       />
+
+      <AlertDialog open={!!deletingProduct} onOpenChange={(open) => !open && setDeletingProduct(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Удалить товар?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Вы уверены, что хотите удалить товар "{deletingProduct?.name}"? Это действие нельзя отменить.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Отмена</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Удалить</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
