@@ -47,12 +47,23 @@ export const useProductsByCategory = (categorySlug: string) => {
 
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select(`
+          *,
+          product_tents!left(image_url, is_default)
+        `)
         .eq("category_id", category.id)
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data as Product[];
+      
+      // Map the default tent image to the product
+      return (data || []).map((product: any) => {
+        const defaultTent = product.product_tents?.find((pt: any) => pt.is_default === true);
+        return {
+          ...product,
+          default_tent_image_url: defaultTent?.image_url || null,
+        };
+      }) as Product[];
     },
   });
 };
