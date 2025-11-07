@@ -36,6 +36,8 @@ interface OrderRequest {
   oldPrice?: number;
   tentPrice?: number;
   tentName?: string;
+  wheelPrice?: number;
+  hubPrice?: number;
   accessoriesPrices?: Array<{ name: string; price: number }>;
   totalPrice: number;
   name: string;
@@ -142,9 +144,15 @@ const handler = async (req: Request): Promise<Response> => {
             <ul style="list-style: none; padding: 0;">
               <li style="padding: 8px 0; font-size: 16px;">
                 <strong>🔘 Колёса:</strong> ${requestData.configuration.wheels}
+                ${requestData.wheelPrice && requestData.wheelPrice !== 0 ? 
+                  `<strong style="color: #059669;">(${requestData.wheelPrice > 0 ? '+' : ''}${formatPrice(requestData.wheelPrice)})</strong>` : 
+                  '<em style="color: #6b7280;">(базовая)</em>'}
               </li>
               <li style="padding: 8px 0; font-size: 16px;">
                 <strong>🔩 Ступица:</strong> ${requestData.configuration.hub}
+                ${requestData.hubPrice && requestData.hubPrice !== 0 ? 
+                  `<strong style="color: #059669;">(${requestData.hubPrice > 0 ? '+' : ''}${formatPrice(requestData.hubPrice)})</strong>` : 
+                  '<em style="color: #6b7280;">(базовая)</em>'}
               </li>
               ${requestData.tentName ? `
                 <li style="padding: 8px 0; font-size: 16px;">

@@ -114,8 +114,8 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
     description: '',
     show_in_hero: false,
     hero_timer_end: '',
-      wheel_options: { default: '', options: [] },
-      hub_options: { default: '', options: [] },
+    wheel_options: { default: '', options: [] as Array<{ name: string; price: number }> },
+    hub_options: { default: '', options: [] as Array<{ name: string; price: number }> },
     features: [] as string[],
     price_on_request: false,
   });
@@ -252,8 +252,8 @@ export const ProductEditDialog = ({ open, onClose, product }: ProductEditDialogP
       description: '',
       show_in_hero: false,
       hero_timer_end: '',
-      wheel_options: { default: '', options: [] },
-      hub_options: { default: '', options: [] },
+      wheel_options: { default: '', options: [] as Array<{ name: string; price: number }> },
+      hub_options: { default: '', options: [] as Array<{ name: string; price: number }> },
       features: [],
       price_on_request: false,
     });

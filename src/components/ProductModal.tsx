@@ -140,6 +140,8 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
           oldPrice: product.old_price,
           tentName: selectedProductTent?.tent?.name,
           tentPrice: selectedProductTent?.price,
+          wheelPrice: selectedWheelPrice,
+          hubPrice: selectedHubPrice,
           accessoriesPrices,
           totalPrice,
           name,
