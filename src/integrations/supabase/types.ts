@@ -20,6 +20,7 @@ export type Database = {
           default_price: number
           display_order: number
           id: string
+          image_url: string | null
           name: string
         }
         Insert: {
@@ -27,6 +28,7 @@ export type Database = {
           default_price: number
           display_order?: number
           id?: string
+          image_url?: string | null
           name: string
         }
         Update: {
@@ -34,6 +36,7 @@ export type Database = {
           default_price?: number
           display_order?: number
           id?: string
+          image_url?: string | null
           name?: string
         }
         Relationships: []

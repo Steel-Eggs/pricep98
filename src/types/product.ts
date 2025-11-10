@@ -55,6 +55,7 @@ export interface Accessory {
   name: string;
   default_price: number;
   display_order: number;
+  image_url?: string;
   created_at?: string;
 }
 

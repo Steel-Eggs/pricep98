@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Accessory {
@@ -15,13 +15,16 @@ interface Accessory {
   name: string;
   default_price: number;
   display_order: number;
+  image_url?: string;
 }
 
 export const AccessoriesManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAccessory, setEditingAccessory] = useState<Accessory | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ name: '', default_price: 0, display_order: 0 });
+  const [formData, setFormData] = useState({ name: '', default_price: 0, display_order: 0, image_url: '' });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const queryClient = useQueryClient();
 
   const { data: accessories, isLoading } = useQuery({
@@ -36,9 +39,31 @@ export const AccessoriesManager = () => {
     },
   });
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `accessories/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('trailer-images')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('trailer-images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
   const createMutation = useMutation({
     mutationFn: async (data: Omit<Accessory, 'id'>) => {
-      const { error } = await supabase.from('accessories').insert(data);
+      let imageUrl = data.image_url;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+      const { error } = await supabase.from('accessories').insert({ ...data, image_url: imageUrl });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -52,7 +77,11 @@ export const AccessoriesManager = () => {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, ...data }: Accessory) => {
-      const { error } = await supabase.from('accessories').update(data).eq('id', id);
+      let imageUrl = data.image_url;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+      const { error } = await supabase.from('accessories').update({ ...data, image_url: imageUrl }).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -78,8 +107,28 @@ export const AccessoriesManager = () => {
   });
 
   const resetForm = () => {
-    setFormData({ name: '', default_price: 0, display_order: 0 });
+    setFormData({ name: '', default_price: 0, display_order: 0, image_url: '' });
     setEditingAccessory(null);
+    setImageFile(null);
+    setImagePreview('');
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setFormData({ ...formData, image_url: '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,7 +146,9 @@ export const AccessoriesManager = () => {
       name: accessory.name,
       default_price: accessory.default_price,
       display_order: accessory.display_order,
+      image_url: accessory.image_url || '',
     });
+    setImagePreview(accessory.image_url || '');
     setIsDialogOpen(true);
   };
 
@@ -152,6 +203,33 @@ export const AccessoriesManager = () => {
                   onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="image">Изображение</Label>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                {(imagePreview || formData.image_url) && (
+                  <div className="relative mt-2">
+                    <img
+                      src={imagePreview || formData.image_url}
+                      alt="Preview"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={removeImage}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               <Button type="submit" className="w-full">
                 {editingAccessory ? 'Сохранить' : 'Создать'}
               </Button>
@@ -163,6 +241,7 @@ export const AccessoriesManager = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Изображение</TableHead>
             <TableHead>Название</TableHead>
             <TableHead>Базовая цена</TableHead>
             <TableHead>Порядок</TableHead>
@@ -172,6 +251,15 @@ export const AccessoriesManager = () => {
         <TableBody>
           {accessories?.map((accessory) => (
             <TableRow key={accessory.id}>
+              <TableCell>
+                {accessory.image_url ? (
+                  <img src={accessory.image_url} alt={accessory.name} className="w-16 h-16 object-cover rounded" />
+                ) : (
+                  <div className="w-16 h-16 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
+                    Нет фото
+                  </div>
+                )}
+              </TableCell>
               <TableCell>{accessory.name}</TableCell>
               <TableCell>{accessory.default_price} ₽</TableCell>
               <TableCell>{accessory.display_order}</TableCell>

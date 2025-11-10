@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CallbackModal } from "./CallbackModal";
 import { useProductTents } from "@/hooks/useTents";
-import { useAccessories } from "@/hooks/useAccessories";
+import { useProductAccessories } from "@/hooks/useAccessories";
 import { useProductSpecifications } from "@/hooks/useProductDetails";
 import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 import type { Product } from "@/types/product";
@@ -26,7 +26,7 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
   const [selectedAccessories, setSelectedAccessories] = useState<Set<string>>(new Set());
 
   const { data: productTents = [], isLoading: tentsLoading } = useProductTents(product.id);
-  const { data: accessories = [], isLoading: accessoriesLoading } = useAccessories();
+  const { data: accessories = [], isLoading: accessoriesLoading } = useProductAccessories(product.id);
   const { data: specifications = [], isLoading: specificationsLoading } = useProductSpecifications(product.id);
 
   // Reset state when modal opens
@@ -83,7 +83,7 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
     // Add accessories prices
     accessories.forEach(accessory => {
       if (selectedAccessories.has(accessory.id)) {
-        price += accessory.default_price;
+        price += accessory.price;
       }
     });
     
@@ -117,13 +117,13 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
     try {
       const selectedAccessoryNames = accessories
         .filter(acc => selectedAccessories.has(acc.id))
-        .map(acc => acc.name);
+        .map(acc => acc.accessory?.name || '');
 
       const accessoriesPrices = accessories
         .filter(acc => selectedAccessories.has(acc.id))
         .map(acc => ({
-          name: acc.name,
-          price: acc.default_price,
+          name: acc.accessory?.name || '',
+          price: acc.price,
         }));
 
       const { error } = await supabase.functions.invoke("send-order-notification", {
@@ -375,10 +375,17 @@ export const ProductModal = ({ product, open, onOpenChange }: ProductModalProps)
                             checked={selectedAccessories.has(accessory.id)}
                             onCheckedChange={() => handleAccessoryToggle(accessory.id)}
                           />
-                          <span className="text-sm font-medium">{accessory.name}</span>
+                          {accessory.accessory?.image_url && (
+                            <img 
+                              src={accessory.accessory.image_url} 
+                              alt={accessory.accessory.name}
+                              className="w-20 h-20 object-cover rounded-lg border-2 border-border"
+                            />
+                          )}
+                          <span className="text-sm font-medium">{accessory.accessory?.name}</span>
                         </div>
                         <span className="text-sm font-bold text-primary">
-                          +{formatPrice(accessory.default_price)}
+                          +{formatPrice(accessory.price)}
                         </span>
                       </label>
                     ))}
