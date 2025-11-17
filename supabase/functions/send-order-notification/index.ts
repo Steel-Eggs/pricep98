@@ -68,7 +68,12 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Failed to fetch recipient email");
     }
 
-    const recipientEmail = settings.value;
+    // Split multiple emails by comma and trim whitespace
+    const recipientEmails = settings.value
+      .split(',')
+      .map((email: string) => email.trim())
+      .filter((email: string) => email.length > 0);
+    
     const requestData: CallbackRequest | PromoRequest | OrderRequest = await req.json();
 
     let emailSubject = "";
@@ -197,7 +202,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "ПРИЦЕП98 <onboarding@resend.dev>",
-        to: [recipientEmail],
+        to: recipientEmails,
         subject: emailSubject,
         html: emailHtml,
       }),
