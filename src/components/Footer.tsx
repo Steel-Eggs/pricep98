@@ -20,11 +20,11 @@ export const Footer = () => {
   const [showCallback, setShowCallback] = useState(false);
 
   const menuItems = [
-    ...(categories?.map(cat => ({
+    ...(categories?.map((cat) => ({
       label: cat.name,
-      href: `#${cat.slug}`
+      href: `#${cat.slug}`,
     })) || []),
-    { label: "Где купить", href: "#location" }
+    { label: "Где купить", href: "#location" },
   ];
 
   return (
@@ -33,9 +33,7 @@ export const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
             <img src={logoMono} alt="ПРИЦЕП98" className="h-10 mb-4" />
-            <p className="text-sm text-background/70 mb-4">
-              Качественные прицепы по доступным ценам с 2014 года
-            </p>
+            <p className="text-sm text-background/70 mb-4">Качественные прицепы по доступным ценам с 2014 года</p>
             <div className="flex items-center gap-1 mb-4">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -67,10 +65,7 @@ export const Footer = () => {
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="text-sm text-background/70 hover:text-background transition-colors"
-                  >
+                  <a href={item.href} className="text-sm text-background/70 hover:text-background transition-colors">
                     {item.label}
                   </a>
                 </li>
@@ -83,20 +78,28 @@ export const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-1 flex-shrink-0" />
-                <a href={`tel:${phone.replace(/\D/g, '')}`} className="text-background/70 hover:text-background transition-colors">
+                <a
+                  href={`tel:${phone.replace(/\D/g, "")}`}
+                  className="text-background/70 hover:text-background transition-colors"
+                >
                   {phone || "+7 (921) 910-38-50"}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 mt-1 flex-shrink-0" />
-                <a href="mailto:info@pricep98.ru" className="text-background/70 hover:text-background transition-colors">
+                <a
+                  href="mailto:info@pricep98.ru"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
                   info@pricep98.ru
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
                 <span className="text-background/70">
-                  Санкт-Петербург,<br />ул. Примерная, д. 123
+                  Санкт-Петербург,
+                  <br />
+                  ул. Примерная, д. 123
                 </span>
               </li>
             </ul>
@@ -113,10 +116,16 @@ export const Footer = () => {
               Позвонить
             </Button>
             <div className="text-xs text-background/70 space-y-2">
-              <button onClick={() => setShowPrivacy(true)} className="block hover:text-background transition-colors text-left">
+              <button
+                onClick={() => setShowPrivacy(true)}
+                className="block hover:text-background transition-colors text-left"
+              >
                 Политика конфиденциальности
               </button>
-              <button onClick={() => setShowTerms(true)} className="block hover:text-background transition-colors text-left">
+              <button
+                onClick={() => setShowTerms(true)}
+                className="block hover:text-background transition-colors text-left"
+              >
                 Пользовательское соглашение
               </button>
               <a href="/auth" className="block hover:text-background transition-colors">
@@ -129,19 +138,15 @@ export const Footer = () => {
         <div className="border-t border-background/20 pt-6 pb-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 order-2 md:order-1">
-              <img 
-                src={developerLogo} 
-                alt="Steel Eggs" 
-                className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity" 
+              <img
+                src={developerLogo}
+                alt="Steel Eggs"
+                className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity"
               />
-              <span className="text-sm text-background/60">
-                разработка и развитие сайтов
-              </span>
+              <span className="text-sm text-background/60">разработка и развитие сайтов</span>
             </div>
-            
-            <p className="text-sm text-background/70 order-1 md:order-2">
-              2025 © Все права защищены. ПРИЦЕП98
-            </p>
+
+            <p className="text-sm text-background/70 order-1 md:order-2">2025 © Все права защищены. ПРИЦЕП98</p>
           </div>
         </div>
       </div>
@@ -149,19 +154,6 @@ export const Footer = () => {
       <PrivacyPolicyDialog open={showPrivacy} onOpenChange={setShowPrivacy} />
       <TermsOfServiceDialog open={showTerms} onOpenChange={setShowTerms} />
       <CallbackModal open={showCallback} onOpenChange={setShowCallback} />
-      <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105366531', 'ym');
-
-    ym(105366531, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/105366531" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
     </footer>
   );
 };
