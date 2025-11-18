@@ -198,11 +198,20 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Send email via SMTP
+    console.log("Preparing to send email via SMTP");
+    console.log(`SMTP Host: ${SMTP_HOST}`);
+    console.log(`SMTP Port: ${SMTP_PORT}`);
+    console.log(`SMTP User: ${SMTP_USER}`);
+    console.log(`Recipients: ${recipientEmails.join(", ")}`);
+    console.log(`Subject: ${emailSubject}`);
+    
+    const smtpPort = parseInt(SMTP_PORT || "587");
+    
     const client = new SMTPClient({
       connection: {
         hostname: SMTP_HOST!,
-        port: parseInt(SMTP_PORT || "465"),
-        tls: true,
+        port: smtpPort,
+        tls: smtpPort === 465,
         auth: {
           username: SMTP_USER!,
           password: SMTP_PASSWORD!,
@@ -210,11 +219,13 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
 
+    console.log("SMTP client initialized, attempting to send email...");
+    
     await client.send({
-      from: `ПРИЦЕП98 <${SMTP_USER}>`,
+      from: SMTP_USER!,
       to: recipientEmails.join(", "),
       subject: emailSubject,
-      content: emailHtml,
+      content: "auto",
       html: emailHtml,
     });
 
