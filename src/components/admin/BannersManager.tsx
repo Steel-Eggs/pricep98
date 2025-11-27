@@ -235,13 +235,15 @@ export const BannersManager = () => {
               <TableCell>{banner.display_order}</TableCell>
               <TableCell>
                 {banner.image_url ? (
-                  <img 
-                    src={banner.image_url} 
-                    alt="" 
-                    className="w-16 h-10 object-cover rounded"
-                  />
+                  <div className="w-16 h-10 bg-muted border border-border rounded overflow-hidden">
+                    <img 
+                      src={banner.image_url} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="w-16 h-10 bg-muted rounded flex items-center justify-center">
+                  <div className="w-16 h-10 bg-muted border border-border rounded flex items-center justify-center">
                     <ImageIcon className="w-4 h-4 text-muted-foreground" />
                   </div>
                 )}
