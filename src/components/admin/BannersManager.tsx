@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAllBanners, Banner } from '@/hooks/useBanners';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,13 +23,15 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, X, ImageIcon } from 'lucide-react';
 
 export const BannersManager = () => {
   const { data: banners, isLoading } = useAllBanners();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
@@ -73,6 +75,57 @@ export const BannersManager = () => {
       display_order: banner.display_order,
     });
     setIsDialogOpen(true);
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Размер файла не должен превышать 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `banner-${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('banners')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from('banners')
+        .getPublicUrl(fileName);
+
+      setFormData({ ...formData, image_url: publicUrlData.publicUrl });
+      toast.success('Изображение загружено');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Ошибка загрузки изображения');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const removeImage = () => {
+    setFormData({ ...formData, image_url: '' });
   };
 
   const handleSubmit = async () => {
@@ -172,18 +225,32 @@ export const BannersManager = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Порядок</TableHead>
+            <TableHead className="w-16">Порядок</TableHead>
+            <TableHead className="w-20">Фото</TableHead>
             <TableHead>Заголовок</TableHead>
             <TableHead>Описание</TableHead>
-            <TableHead>Градиент</TableHead>
-            <TableHead>Активен</TableHead>
-            <TableHead className="text-right">Действия</TableHead>
+            <TableHead className="w-24">Градиент</TableHead>
+            <TableHead className="w-20">Активен</TableHead>
+            <TableHead className="text-right w-28">Действия</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {banners?.map((banner) => (
             <TableRow key={banner.id}>
               <TableCell>{banner.display_order}</TableCell>
+              <TableCell>
+                {banner.image_url ? (
+                  <img 
+                    src={banner.image_url} 
+                    alt="" 
+                    className="w-16 h-10 object-cover rounded"
+                  />
+                ) : (
+                  <div className="w-16 h-10 bg-muted rounded flex items-center justify-center">
+                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                )}
+              </TableCell>
               <TableCell className="font-medium max-w-[200px] truncate">
                 {banner.title}
               </TableCell>
@@ -255,6 +322,56 @@ export const BannersManager = () => {
             </div>
 
             <div className="space-y-2">
+              <Label>Изображение (фон)</Label>
+              {formData.image_url ? (
+                <div className="relative">
+                  <img
+                    src={formData.image_url}
+                    alt="Превью баннера"
+                    className="w-full h-48 object-cover rounded-lg border"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={removeImage}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors"
+                >
+                  {isUploading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm text-muted-foreground">Загрузка...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">
+                        Нажмите для загрузки изображения
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        PNG, JPG, WebP до 5MB
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="gradient">Градиент (Tailwind классы)</Label>
               <Input
                 id="gradient"
@@ -288,16 +405,6 @@ export const BannersManager = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="image_url">URL изображения (фон)</Label>
-              <Input
-                id="image_url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://..."
-              />
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="display_order">Порядок отображения</Label>
@@ -323,7 +430,7 @@ export const BannersManager = () => {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Отмена
             </Button>
-            <Button onClick={handleSubmit}>
+            <Button onClick={handleSubmit} disabled={isUploading}>
               {editingBanner ? 'Сохранить' : 'Создать'}
             </Button>
           </DialogFooter>
