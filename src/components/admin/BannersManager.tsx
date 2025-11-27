@@ -93,33 +93,23 @@ export const BannersManager = () => {
     setIsUploading(true);
     try {
       const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const fileName = `banner-${Date.now()}.${fileExt}`;
+      const fileName = `banners/banner-${Date.now()}.${fileExt}`;
 
-      console.log('Uploading file:', {
-        name: fileName,
-        type: file.type,
-        size: file.size
-      });
-
-      // Upload file directly (same approach as trailer-images)
-      const { error: uploadError, data: uploadData } = await supabase.storage
-        .from('banners')
+      // Upload to trailer-images bucket (same as other working uploads)
+      const { error: uploadError } = await supabase.storage
+        .from('trailer-images')
         .upload(fileName, file);
 
       if (uploadError) {
-        console.error('Upload error details:', uploadError);
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
-      console.log('Upload success:', uploadData);
-
-      const { data: publicUrlData } = supabase.storage
-        .from('banners')
+      const { data: { publicUrl } } = supabase.storage
+        .from('trailer-images')
         .getPublicUrl(fileName);
 
-      console.log('Public URL:', publicUrlData.publicUrl);
-
-      setFormData(prev => ({ ...prev, image_url: publicUrlData.publicUrl }));
+      setFormData(prev => ({ ...prev, image_url: publicUrl }));
       toast.success('Изображение загружено');
     } catch (error) {
       console.error('Upload error:', error);
