@@ -7,14 +7,14 @@ import { ProductSection } from "@/components/ProductSection";
 import { LocationSection } from "@/components/LocationSection";
 import { Footer } from "@/components/Footer";
 import { useCategories } from "@/hooks/useCategories";
-import { NewYearModal } from "@/components/NewYearModal";
+// import { NewYearModal } from "@/components/NewYearModal"; // Скрыто - можно активировать при необходимости
 
 const Index = () => {
   const { data: categories, isLoading } = useCategories();
 
   return (
     <div className="min-h-screen bg-background">
-      <NewYearModal />
+      {/* <NewYearModal /> */}
       <Header />
       <main>
         {/* <HeroSection /> */}
